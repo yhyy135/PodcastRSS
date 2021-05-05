@@ -72,13 +72,7 @@ class Vistopia
     protected function getShowInfo() {
         $url = "https://api.vistopia.com.cn/api/v1/content/content-show/" . $this->channel_id;
         $url = !empty($this->token) ? $url . "?api_token=" . $this->token : $url;
-        $response = curl_request($url);
-        $cnt = 0;
-        while ($cnt < 3 && $response === false) {
-            $response = curl_request($url);
-            sleep(1);
-            $cnt++;
-        }
+        $response = getRequest($url);
 
         $response = json_decode($response, true);
         if (empty($response['data'])) {
@@ -106,13 +100,7 @@ class Vistopia
         } else {
             $url = 'https://api.vistopia.com.cn/api/v1/content/article_list?&count=1001&content_id=' . $this->content_id;
         }
-        $response = curl_request($url);
-        $cnt = 0;
-        while ($cnt < 3 && $response === false) {
-            $response = curl_request($url);
-            sleep(1);
-            $cnt++;
-        }
+        $response = getRequest($url);
 
         $response = json_decode($response, true);
         if (empty($response['data'])) {
@@ -314,6 +302,28 @@ function commonLog($message = '', $flag = false)
     if ($flag) {
         exit;
     }
+}
+
+/**
+ * Get curl request result.
+ * @param string $url
+ * @param array $header
+ * @return bool|string
+ */
+function getRequest($url = '', $header = []) {
+    if (empty($url)) {
+        return false;
+    }
+
+    $response = curl_request($url, $header);
+    $cnt = 0;
+    while ($cnt < 3 && $response === false) {
+        $response = curl_request($url, $header);
+        sleep(1);
+        $cnt++;
+    }
+
+    return $response;
 }
 
 /**
