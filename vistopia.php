@@ -45,7 +45,7 @@ class Vistopia
         }
         $this->channel_url = $opts['i'];
 
-        if (strpos($this->channel_url, 'https://shop.vistopia.com.cn/detail?id=') !== false) {
+        if (str_contains($this->channel_url, 'https://shop.vistopia.com.cn/detail?id=')) {
             $channel_id = str_replace('https://shop.vistopia.com.cn/detail?id=', '', $this->channel_url);
             $this->channel_id = $channel_id;
         }
