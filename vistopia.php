@@ -296,11 +296,11 @@ class Vistopia
 
         $atomString = $feedIo->toRss($feed);
 
-        $this->fileName = "vistopia-$this->channel_id.xml";
         $atomString = !empty($contentArr) ? str_replace(array_keys($contentArr), $contentArr, $atomString) : $atomString;
 
+        $this->fileName = "vistopia-$this->content_id.xml";
 
-        file_put_contents($this->location.$this->fileName, $atomString);
+        file_put_contents('./'.$this->fileName, $atomString);
 
         return true;
     }
