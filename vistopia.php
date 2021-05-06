@@ -25,10 +25,7 @@ class Vistopia
     public string $fileName;
 
     // The url to the directory of site.
-    public string $domain = "https://exaple.com/";
-
-	// The directory of site.
-    public string $location = '/root/html/';
+    public $domain = "https://exaple.com/";
 
     public $token = '';
     public $show_note_flag = false;
