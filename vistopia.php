@@ -197,6 +197,7 @@ class Vistopia
 
         $i = 1;
         $contentArr = [];
+        $pubDateArr = [];
         foreach ($this->articleList as $datum) {
             $content = !empty($datum['content_url']) ? '阅读原文：'.$datum['content_url'] : '';
 
@@ -277,6 +278,8 @@ class Vistopia
                 $updateDate = $response['data']['part'][0]['update_date'] ?? '';
                 $updateDate = str_replace('.', '-', $updateDate);
                 $pubTime = !empty($updateDate) ? strtotime($updateDate) : time();
+                $pubTime = !isset($pubDateArr[$updateDate]) ? $pubTime : $pubDateArr[$updateDate] + 1; // Avoid the same pubTime for item.
+                $pubDateArr[$updateDate] = $pubTime;
                 $dateTime = new \DateTime;
                 $item->setLastModified($dateTime->setTimestamp($pubTime));
 
