@@ -13,16 +13,16 @@ new Vistopia();
 
 class Vistopia
 {
-    public string $channel_url;
-    public string $channel_id;
-    public int $content_id;
-    public string $title;
-    public string $subtitle;
-    public string $author;
-    public string $channel_image;
-    public array $articleList;
-    public string $articleCount;
-    public string $fileName;
+    public $channel_url;
+    public $channel_id;
+    public $content_id;
+    public $title;
+    public $subtitle;
+    public $author;
+    public $channel_image;
+    public $articleList;
+    public $articleCount;
+    public $fileName;
 
     // The url to the directory of site.
     public $domain = "https://exaple.com/";
