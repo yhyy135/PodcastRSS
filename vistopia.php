@@ -195,7 +195,6 @@ class Vistopia
         $feed->addElement($channel);
 
         $i = 1;
-
         $contentArr = [];
         foreach ($this->articleList as $datum) {
             $content = !empty($datum['content_url']) ? '阅读原文：'.$datum['content_url'] : '';
@@ -246,23 +245,18 @@ class Vistopia
 
 
             $description = $content;
-            $descriptionHtml = '';
             if ($this->show_note_flag) {
                 commonLog("Getting content of show[$i/$this->articleCount]: " . $datum['title']);
                 sleep(3);
 
-                $content1 = '';
-                $content1 = getRequest($datum['content_url']);
-                $content1 = preg_replace('#\<script.+</script>#sm', '', $content1);
-                if ($datum['content_url'] == 'https://api.vistopia.com.cn/api/v1/web/article-content/6izot') {
-                    var_dump($content1);die;
+                $content_url = 'https://api.vistopia.com.cn/api/v1/reader/section-detail?api_token=&article_id=' . $datum['article_id'];
+                $response = getRequest($content_url);
+                $response = json_decode($response, true);
+                if (empty($response['data'])) {
+                    commonLog('Get category failed. Please try again.', true);
                 }
-                $dom = new DOMDocument();
-                @$dom->loadHTML($content1);
-                $xpath = new DOMXPath($dom);
-                $elems = $xpath->query("/html/body/div[2]/div");
-                $description = !empty($elems) ? htmlspecialchars($elems[0]->nodeValue) : '';
-                $descriptionHtml = !empty($elems) ? trim($dom->saveHTML($elems[0])) : '';
+                $descriptionHtml = $response['data']['part'][0]['content'] ?? '';
+                $description = strip_tags($descriptionHtml);
 
                 $uuid = 'content_' . $datum['article_id'];
                 $contentArr[$uuid] = '<![CDATA[' . $descriptionHtml . ']]>';
