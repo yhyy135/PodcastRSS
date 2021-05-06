@@ -32,6 +32,7 @@ class Vistopia
 
     public $token = '';
     public $show_note_flag = false;
+    public $timezone = 'Asia/Shanghai';
 
     /**
      * Initializer
@@ -51,6 +52,7 @@ class Vistopia
         }
         $this->token = isset($opts['t']) ? $opts['t'] : '';
         $this->show_note_flag = isset($opts['shownote']) ? true : false;
+        date_default_timezone_set($this->timezone);
 
         $this->handle();
     }
@@ -270,6 +272,12 @@ class Vistopia
                 $element->setName('itunes:summary');
                 $element->setValue($uuid);
                 $item->addElement($element);
+
+                $updateDate = $response['data']['part'][0]['update_date'] ?? '';
+                $updateDate = str_replace('.', '-', $updateDate);
+                $pubTime = !empty($updateDate) ? strtotime($updateDate) : time();
+                $dateTime = new \DateTime;
+                $item->setLastModified($dateTime->setTimestamp($pubTime));
 
                 unset($dom, $xpath, $elems);
             }
