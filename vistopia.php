@@ -255,7 +255,7 @@ class Vistopia
                     commonLog('Get category failed. Please try again.', true);
                 }
                 $descriptionHtml = $response['data']['part'][0]['content'] ?? '';
-                $description = strip_tags($descriptionHtml);
+                $description = htmlspecialchars(strip_tags($descriptionHtml));
 
                 $uuid = 'content_' . $datum['article_id'];
                 $contentArr[$uuid] = '<![CDATA[' . $descriptionHtml . ']]>';
