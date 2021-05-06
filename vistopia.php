@@ -14,7 +14,7 @@ new Vistopia();
 class Vistopia
 {
     public $channel_url;
-    public $channel_id;
+    public $channel_code;
     public $content_id;
     public $title;
     public $subtitle;
@@ -44,8 +44,8 @@ class Vistopia
         $this->channel_url = $opts['i'];
 
         if (str_contains($this->channel_url, 'https://shop.vistopia.com.cn/detail?id=')) {
-            $channel_id = str_replace('https://shop.vistopia.com.cn/detail?id=', '', $this->channel_url);
-            $this->channel_id = $channel_id;
+            $channel_code         = str_replace('https://shop.vistopia.com.cn/detail?id=', '', $this->channel_url);
+            $this->channel_code = $channel_code;
         }
         $this->token = isset($opts['t']) ? $opts['t'] : '';
         $this->show_note_flag = isset($opts['shownote']) ? true : false;
@@ -72,7 +72,7 @@ class Vistopia
      * @return bool
      */
     protected function getShowInfo() {
-        $url = "https://api.vistopia.com.cn/api/v1/content/content-show/" . $this->channel_id;
+        $url = "https://api.vistopia.com.cn/api/v1/content/content-show/" . $this->channel_code;
         $url = !empty($this->token) ? $url . "?api_token=" . $this->token : $url;
         $response = getRequest($url);
 
