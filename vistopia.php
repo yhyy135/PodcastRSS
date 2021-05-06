@@ -297,6 +297,7 @@ class Vistopia
             $feed->add($item);
         }
 
+        $feed->setLastModified(new \DateTime);
         $atomString = $feedIo->toRss($feed);
 
         $atomString = !empty($contentArr) ? str_replace(array_keys($contentArr), $contentArr, $atomString) : $atomString;
