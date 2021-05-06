@@ -248,7 +248,7 @@ class Vistopia
                 commonLog("Getting content of show[$i/$this->articleCount]: " . $datum['title']);
                 sleep(3);
 
-                $content_url = 'https://api.vistopia.com.cn/api/v1/reader/section-detail?api_token=&article_id=' . $datum['article_id'];
+                $content_url = 'https://api.vistopia.com.cn/api/v1/reader/section-detail?api_token=' . $this->token . '&article_id=' . $datum['article_id'];
                 $response = getRequest($content_url);
                 $response = json_decode($response, true);
                 if (empty($response['data'])) {
