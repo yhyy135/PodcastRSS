@@ -87,6 +87,8 @@ class Vistopia
         $this->subtitle      = $data['subtitle'];
         $this->author        = $data['author'];
         $this->channel_image = $data['background_img'];
+        $this->channel_url   = preg_replace('#(.+id=)\w+#m', '$1', $this->channel_url) . $this->content_id;
+
 
         return true;
     }
@@ -202,7 +204,9 @@ class Vistopia
             $item->setTitle($datum['title']);
             $item->setSummary($content);
             $item->setContent($content);
-            $item->setLink($datum['share_url']);
+
+            $itemUrl = preg_replace('#(.+article_id=)\w+#m', '$1', $datum['share_url']) . $datum['article_id'];
+            $item->setLink($itemUrl);
 
             $element = $item->newElement();
             $element->setName('itunes:subtitle');
