@@ -1,17 +1,17 @@
 <?php
-require 'vendor/autoload.php';
 
-// Define separator by server type.
-define("IS_WIN", DIRECTORY_SEPARATOR == '\\');
-if (IS_WIN) {
-    define("BREAK_STRING", "\r\n");
-} else {
-    define("BREAK_STRING", "\n");
-}
+namespace App;
 
-new Vistopia();
+use DateTime;
+use FeedIo\Factory;
+use FeedIo\Feed;
+use FeedIo\Feed\Item;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputOption;
 
-class Vistopia
+class Vistopia extends Command
 {
     public $channel_url;
     public $channel_code;
@@ -31,27 +31,35 @@ class Vistopia
     public $show_note_flag = false;
     public $timezone = 'Asia/Shanghai';
 
-    /**
-     * Initializer
-     */
-    public function __construct()
+    protected function configure(): void
+    {
+        $this->setName('generate:vistopia')
+             ->setDescription('This is a RSS generator for Vistopia.')
+             ->setHelp('This command generate a RSS file in rss folder by input params such as api token of Vistopia. The show notes detail is optional.');
+
+        $this->addOption('url', 'i',  InputOption::VALUE_REQUIRED, 'The url of the show detail page.');
+        $this->addOption('token', 't', InputOption::VALUE_OPTIONAL, 'The token of vistopia account.', '');
+        $this->addOption('shownote', 's', InputOption::VALUE_OPTIONAL, 'The identifier of generating RSS include show notes information.', false);
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         //Get options.
-        $opts = getopt('i:t::', ['shownote::']);
-        if (!isset($opts['i']) || empty($opts['i'])) {
-            commonLog('Please input channel url!', true);
-        }
-        $this->channel_url = $opts['i'];
+        $this->channel_url = $input->getOption('url');
 
         if (str_contains($this->channel_url, 'https://shop.vistopia.com.cn/detail?id=')) {
             $channel_code         = str_replace('https://shop.vistopia.com.cn/detail?id=', '', $this->channel_url);
             $this->channel_code = $channel_code;
         }
-        $this->token = isset($opts['t']) ? $opts['t'] : '';
-        $this->show_note_flag = isset($opts['shownote']) ? true : false;
+
+        $this->token = $input->getOption('url');
+        $this->show_note_flag = $input->getOption('url') == false ? false : true;
+
         date_default_timezone_set($this->timezone);
 
         $this->handle();
+
+        return Command::SUCCESS;
     }
 
     /**
@@ -71,7 +79,8 @@ class Vistopia
      * Get detail info of the show.
      * @return bool
      */
-    protected function getShowInfo() {
+    protected function getShowInfo(): bool
+    {
         $url = "https://api.vistopia.com.cn/api/v1/content/content-show/" . $this->channel_code;
         $url = !empty($this->token) ? $url . "?api_token=" . $this->token : $url;
         $response = getRequest($url);
@@ -97,7 +106,7 @@ class Vistopia
      * Get article list of the show.
      * @return bool
      */
-    public function getCategory()
+    public function getCategory(): bool
     {
         if (!empty($this->token)) {
             $url = 'https://api.vistopia.com.cn/api/v1/content/article_list?api_token=' . $this->token . '&content_id=' . $this->content_id . '&api_token=' . $this->token . '&count=1001';
@@ -120,14 +129,15 @@ class Vistopia
      * Generate RSS file.
      * @return bool
      */
-    protected function generateRss() {
+    protected function generateRss(): bool
+    {
         if (empty($this->articleList)) {
             commonLog('Article list is empty.', true);
         }
 
-        $feedIo = \FeedIo\Factory::create()->getFeedIo();
+        $feedIo = Factory::create()->getFeedIo();
         // build the feed
-        $feed = new FeedIo\Feed;
+        $feed = new Feed;
 
         // add namespaces
         $feed->addNS('dc', 'http://purl.org/dc/elements/1.1/');
@@ -201,7 +211,7 @@ class Vistopia
         foreach ($this->articleList as $datum) {
             $content = !empty($datum['content_url']) ? '阅读原文：'.$datum['content_url'] : '';
 
-            $item = new \FeedIo\Feed\Item;
+            $item = new Item;
             $item->setTitle($datum['title']);
             $item->setSummary($content);
             $item->setContent($content);
@@ -280,7 +290,7 @@ class Vistopia
                 $pubTime = !empty($updateDate) ? strtotime($updateDate) : time();
                 $pubTime = !isset($pubDateArr[$updateDate]) ? $pubTime : $pubDateArr[$updateDate] + 1; // Avoid the same pubTime for item.
                 $pubDateArr[$updateDate] = $pubTime;
-                $dateTime = new \DateTime;
+                $dateTime = new DateTime;
                 $item->setLastModified($dateTime->setTimestamp($pubTime));
 
                 unset($dom, $xpath, $elems);
@@ -300,7 +310,7 @@ class Vistopia
             $feed->add($item);
         }
 
-        $feed->setLastModified(new \DateTime);
+        $feed->setLastModified(new DateTime);
         $atomString = $feedIo->toRss($feed);
 
         $atomString = !empty($contentArr) ? str_replace(array_keys($contentArr), $contentArr, $atomString) : $atomString;
@@ -311,91 +321,4 @@ class Vistopia
 
         return true;
     }
-}
-
-/**
- * Print method for debug.
- */
-function p()
-{
-    $args=func_get_args();  //获取多个参数
-    if (count($args)<1) {
-        echo("<font color='red'>必须为p()函数提供参数!");
-        return;
-    }
-    echo '<div style="width:100%;text-align:left"><pre>';
-    //多个参数循环输出
-    foreach ($args as $arg) {
-        if (is_array($arg)) {
-            print_r($arg);
-            echo '<br>';
-        } elseif (is_string($arg)) {
-            echo $arg.'<br>';
-        } else {
-            var_dump($arg);
-            echo '<br>';
-        }
-    }
-    echo '</pre></div>';
-    die;
-}
-
-/**
- * Output the log info.
- * @param string $message
- * @param false $flag
- */
-function commonLog($message = '', $flag = false)
-{
-    $niceMsg = "[" . date("Y-m-d H:i:s") . "] " . $message . BREAK_STRING;
-    echo $niceMsg;
-    if ($flag) {
-        exit;
-    }
-}
-
-/**
- * Get curl request result.
- * @param string $url
- * @param array $header
- * @return bool|string
- */
-function getRequest($url = '', $header = []) {
-    if (empty($url)) {
-        return false;
-    }
-
-    $response = curl_request($url, $header);
-    $cnt = 0;
-    while ($cnt < 3 && $response === false) {
-        $response = curl_request($url, $header);
-        sleep(1);
-        $cnt++;
-    }
-
-    return $response;
-}
-
-/**
- * CURL request method.
- * @param $request_url
- * @param array $header
- * @return bool|string
- */
-function curl_request($request_url, $header = []) {
-    $ch     = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $request_url);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-    curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36");
-
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-
-    $response = curl_exec($ch);
-    curl_close($ch);
-
-    return $response;
 }
