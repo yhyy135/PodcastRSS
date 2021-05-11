@@ -52,8 +52,8 @@ class Vistopia extends Command
             $this->channel_code = $channel_code;
         }
 
-        $this->token = $input->getOption('url');
-        $this->show_note_flag = $input->getOption('url') == false ? false : true;
+        $this->token = $input->getOption('token');
+        $this->show_note_flag = $input->getOption('shownote') === false ? false : true;
 
         date_default_timezone_set($this->timezone);
 
