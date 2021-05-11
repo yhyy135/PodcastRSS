@@ -127,6 +127,8 @@ class Vistopia extends Command
             commonLog('Article list is empty.', true);
         }
 
+        $this->fileName = "vistopia-$this->content_id.xml";
+
         $feedIo = Factory::create()->getFeedIo();
         // build the feed
         $feed = new Feed;
@@ -154,7 +156,7 @@ class Vistopia extends Command
 
         $channel = $feed->newElement();
         $channel->setName('link');
-        $channel->setValue($this->channel_url);
+        $channel->setValue($this->domain . '/' . $this->fileName);
         $feed->addElement($channel);
 
         $channel = $feed->newElement();
@@ -306,8 +308,6 @@ class Vistopia extends Command
         $atomString = $feedIo->toRss($feed);
 
         $atomString = !empty($contentArr) ? str_replace(array_keys($contentArr), $contentArr, $atomString) : $atomString;
-
-        $this->fileName = "vistopia-$this->content_id.xml";
 
         file_put_contents('./'.$this->fileName, $atomString);
 
