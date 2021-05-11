@@ -57,22 +57,14 @@ class Vistopia extends Command
 
         date_default_timezone_set($this->timezone);
 
-        $this->handle();
-
-        return Command::SUCCESS;
-    }
-
-    /**
-     * 执行函数
-     */
-    public function handle()
-    {
         $this->getShowInfo();
         $this->getCategory();
         $this->generateRss();
 
         commonLog('Youtube rss generation is done!!!');
         commonLog('The RSS Link is ' . $this->domain . $this->fileName, true);
+
+        return Command::SUCCESS;
     }
 
     /**
