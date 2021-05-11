@@ -25,7 +25,7 @@ class Vistopia extends Command
     public $fileName;
 
     // The url to the directory of site.
-    public $domain = "https://exaple.com/";
+    public $domain = "https://example.com/";
 
     public $token = '';
     public $show_note_flag = false;
