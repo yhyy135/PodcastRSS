@@ -74,7 +74,7 @@ class Vistopia extends Command
     protected function getShowInfo(): bool
     {
         $url = "https://api.vistopia.com.cn/api/v1/content/content-show/" . $this->channel_code;
-        $url = !empty($this->token) ? $url . "?api_token=" . $this->token : $url;
+        $url = !empty($this->token) ? $url . "&api_token=" . $this->token : $url;
         $response = getRequest($url);
 
         $response = json_decode($response, true);
