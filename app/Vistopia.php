@@ -145,6 +145,13 @@ class Vistopia extends Command
         $feed->addNS('fireside', 'http://fireside.fm/modules/rss/fireside');
 
         $channel = $feed->newElement();
+        $channel->setName('atom:link');
+        $channel->setAttribute('href', $this->domain . '/' . $this->fileName);
+        $channel->setAttribute('type', 'application/rss+xml');
+        $channel->setAttribute('rel', 'self');
+        $feed->addElement($channel);
+
+        $channel = $feed->newElement();
         $channel->setName('copyright');
         $channel->setValue('Copyright 看理想 @看理想vistopia');
         $feed->addElement($channel);
