@@ -7,6 +7,8 @@ use Symfony\Component\Yaml\Yaml;
 
 class BaseCommand extends Command
 {
+    public $config;
+
     // The url to the directory of site.
     public $domain;
 
@@ -27,6 +29,7 @@ class BaseCommand extends Command
         $configFile = dirname(__DIR__) . '/' . 'config.yaml';
         $config = Yaml::parse(file_get_contents($configFile));
 
+        $this->config   = $config ?? [];
         $this->domain   = $config['domain'] ?? 'https://example.com';
         $this->token    = $config['token'] ?? '';
         $this->timezone = $config['timezone'] ?? 'Asia/Shanghai';
