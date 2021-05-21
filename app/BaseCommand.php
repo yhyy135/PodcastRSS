@@ -3,6 +3,7 @@
 namespace App;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Yaml\Yaml;
 
 class BaseCommand extends Command
 {
@@ -23,5 +24,11 @@ class BaseCommand extends Command
     public function __construct()
     {
         parent::__construct();
+        $configFile = dirname(__DIR__) . '/' . 'config.yaml';
+        $config = Yaml::parse(file_get_contents($configFile));
+
+        $this->domain   = $config['domain'] ?? 'https://example.com';
+        $this->token    = $config['token'] ?? '';
+        $this->timezone = $config['timezone'] ?? 'Asia/Shanghai';
     }
 }
