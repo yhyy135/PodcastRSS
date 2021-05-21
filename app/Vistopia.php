@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
-class Vistopia extends Command
+class Vistopia extends BaseCommand
 {
     public $channel_url;
     public $channel_code;
@@ -23,13 +23,6 @@ class Vistopia extends Command
     public $articleList;
     public $articleCount;
     public $fileName;
-
-    // The url to the directory of site.
-    public $domain = "https://example.com";
-
-    public $token = '';
-    public $show_note_flag = false;
-    public $timezone = 'Asia/Shanghai';
 
     protected function configure(): void
     {
