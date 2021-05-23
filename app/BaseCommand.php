@@ -31,7 +31,6 @@ class BaseCommand extends Command
 
         $this->config   = $config ?? [];
         $this->domain   = $config['domain'] ?? 'https://example.com';
-        $this->token    = $config['token'] ?? '';
         $this->timezone = $config['timezone'] ?? 'Asia/Shanghai';
     }
 }
