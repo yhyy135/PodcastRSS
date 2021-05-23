@@ -13,6 +13,8 @@ use Symfony\Component\Console\Input\InputOption;
 
 class Vistopia extends BaseCommand
 {
+    public $token;
+
     public $channel_url;
     public $channel_code;
     public $content_id;
@@ -45,7 +47,7 @@ class Vistopia extends BaseCommand
             $this->channel_code = $channel_code;
         }
 
-        $this->token = $input->getOption('token');
+        $this->token = !empty($input->getOption('token')) ? $input->getOption('token') : $this->config['vistopia_token'];
         $this->show_note_flag = $input->getOption('shownote') === false ? false : true;
 
         date_default_timezone_set($this->timezone);
