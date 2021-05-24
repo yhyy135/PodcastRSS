@@ -3,7 +3,8 @@
     "php": "~8.0",
     "debril/feed-io": "~v5.0.0",
     "symfony/console": "^5.2",
-    "symfony/yaml": "^5.2"
+    "symfony/yaml": "^5.2",
+    "ext-json": "*"
   },
   "autoload": {
     "psr-4":{
