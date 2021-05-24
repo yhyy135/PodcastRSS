@@ -47,7 +47,10 @@ class Vistopia extends BaseCommand
             $this->channel_code = $channel_code;
         }
 
-        $this->token = !empty($input->getOption('token')) ? $input->getOption('token') : $this->config['vistopia_token'];
+        $this->token = '';
+        $this->token = $this->config['vistopia_token'] != 'VISTOPIA_TOKEN' ? $this->config['vistopia_token'] : $this->token;
+        $this->token = !empty($input->getOption('token')) ? $input->getOption('token') : $this->token;
+
         $this->show_note_flag = $input->getOption('shownote') === false ? false : true;
 
         date_default_timezone_set($this->timezone);
