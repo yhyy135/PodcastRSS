@@ -25,6 +25,7 @@ class Vistopia extends BaseCommand
     public $articleList;
     public $articleCount;
     public $fileName;
+    public $fileUrl;
 
     protected function configure(): void
     {
@@ -60,7 +61,7 @@ class Vistopia extends BaseCommand
         $this->generateRss();
 
         commonLog('Youtube rss generation is done!!!');
-        commonLog('The RSS Link is ' . $this->domain . $this->fileName, true);
+        commonLog('The RSS Link is ' . $this->fileUrl, true);
 
         return Command::SUCCESS;
     }
@@ -126,6 +127,7 @@ class Vistopia extends BaseCommand
         }
 
         $this->fileName = "vistopia-$this->content_id.xml";
+        $this->fileUrl = $this->domain . '/' . $this->fileName;
 
         $feedIo = Factory::create()->getFeedIo();
         // build the feed
@@ -144,7 +146,7 @@ class Vistopia extends BaseCommand
 
         $channel = $feed->newElement();
         $channel->setName('atom:link');
-        $channel->setAttribute('href', $this->domain . '/' . $this->fileName);
+        $channel->setAttribute('href', $this->fileUrl);
         $channel->setAttribute('type', 'application/rss+xml');
         $channel->setAttribute('rel', 'self');
         $feed->addElement($channel);
@@ -161,7 +163,7 @@ class Vistopia extends BaseCommand
 
         $channel = $feed->newElement();
         $channel->setName('link');
-        $channel->setValue($this->domain . '/' . $this->fileName);
+        $channel->setValue($this->fileUrl);
         $feed->addElement($channel);
 
         $channel = $feed->newElement();
